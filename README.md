@@ -1,2 +1,2 @@
 # snowboard
-A collaborative peer-to-peer whiteboad using python
+A collaborative peer-to-peer whiteboard using python
