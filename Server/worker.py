@@ -24,6 +24,7 @@ class Worker(Thread):
                 self.table[name_board] = []
                 print("\tAdded " + self.client_ip + " to " + name_board)
                 self.table[name_board].append(self.client_ip)
+                self.s.sendto("created".encode('utf-8'), (self.client_ip, self.client_port))
 
         elif self.msg.startswith("list all"):
             response = ""
