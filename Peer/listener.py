@@ -35,7 +35,7 @@ class Listener(Thread):
                 data = data.split(":")
 
                 index = 1
-                while 1 < len(data):
+                while index < len(data):
                     color = (int(data[index]), int(data[index+1]), int(data[index+2]))
 
                     if color != self.my_color:

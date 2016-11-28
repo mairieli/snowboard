@@ -21,12 +21,14 @@ class Sender(Thread):
 
                 try:
                     my_ip = socket.gethostbyname(socket.gethostname())
-                    if self.ips.index(my_ip) + 1:
+                    next_index = self.ips.index(my_ip) + 1
+                    print("lala")
+                    if next_index < len(self.ips):
                         print("Connecting to the next on the network")
                         index = self.ips.index(my_ip) + 1
                     else:
                         print("Connecting to the first IP of the network")
-                        index = self.ips[0]
+                        index = 0
                         connected_to_first = True
 
                     print("Trying to connect to " + self.ips[index] + ":" + str(self.port))
@@ -44,7 +46,8 @@ class Sender(Thread):
                         if send_current < len(self.queue_sender):
                             s.send(self.queue_sender[send_current].encode('utf-8'))
                             send_current = send_current + 1
-                        if connected_to_first and self.ips[self.ips.index(my_ip) + 1]:
+                        next_index = self.ips.index(my_ip) + 1
+                        if connected_to_first and next_index < len(self.ips):
                             print("Stopping sending to the first, for send to the next")
                             break
 

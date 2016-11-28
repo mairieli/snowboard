@@ -52,6 +52,7 @@ class Peer:
         for ip in ips:
             if ip != my_ip:
                 self.ips.append(ip)
+        self.ips.append(my_ip)
 
 if __name__ == '__main__':
     print("Starting Peer...")
