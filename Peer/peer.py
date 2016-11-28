@@ -90,6 +90,10 @@ if __name__ == '__main__':
                         created = True
             else:
                 boards = peer.list_boards()
+                if boards == "":
+                    os.system('clear')
+                    print("No boards on Server")
+                    exit()
                 choices = []
                 for b in boards:
                     choices.append((b, ""))
