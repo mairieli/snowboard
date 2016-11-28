@@ -11,28 +11,42 @@ class Sender(Thread):
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         send_current = 0
-        removed_ip = ""
+        remove_ip = ""
+
         while True:
-            first = False
-            if len(self.ips) > 0:
+            connected_to_first = False
+
+            if len(self.ips) > 1:
+                print("Sending data...")
+
                 try:
                     my_ip = socket.gethostbyname(socket.gethostname())
                     if self.ips.index(my_ip) + 1:
+                        print("Connecting to the next on the network")
                         index = self.ips.index(my_ip) + 1
                     else:
+                        print("Connecting to the first IP of the network")
                         index = self.ips[0]
-                        fist = True
+                        connected_to_first = True
+
+                    print("Trying to connect to " + self.ips[index] + ":" + str(self.port))
                     s.connect((self.ips[index], self.port))
-                    if removed_ip != "":
-                        udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                        response = "remove " + removed_ip
-                        udp.sendto(response.encode('utf-8'), (self.ips[index], 5002))
-                        removed_ip = ""
+                    print("Sending data to " + self.ips[index] + ":" + str(self.port))
+
+                    if remove_ip != "":
+                        s_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                        msg = "remove " + remove_ip
+                        print("Sending UDP '" + msg + "' to " + self.ips[index] + ":5002")
+                        s_udp.sendto(msg.encode('utf-8'), (self.ips[index], 5002))
+                        remove_ip = ""
+
                     while True:
-                        if send_current < len(self.queue_sender)
+                        if send_current < len(self.queue_sender):
                             s.send(queue_sender[send_current])
                             send_current = send_current + 1
-                        if first and self.ips[self.ips.index(my_ip) + 1]:
+                        if connected_to_first and self.ips[self.ips.index(my_ip) + 1]:
+                            print("Stopping sending to the first, for send to the next")
                             break
-                catch:
-                    removed_ip = self.ips.pop()
+
+                except error:
+                    remove_ip = self.ips.pop()

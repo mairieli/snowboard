@@ -22,10 +22,10 @@ class Whiteboard:
                 if event.type == pygame.MOUSEMOTION and self.clicked:
                     point = event.__dict__['pos']
                     self.points.append(point)
-                    queue_sender(str(self.my_color[0]) + ":" str(self.my_color[1]) + ":" str(self.my_color[2]) + ":" + str(point[0]) + ":" + str(point[1]))
+                    self.queue_sender.append(str(self.my_color[0]) + ":" + str(self.my_color[1]) + ":" + str(self.my_color[2]) + ":" + str(point[0]) + ":" + str(point[1]))
 
                 if event.type == pygame.MOUSEBUTTONUP:
-                    queue_sender(str(self.my_color[0]) + ":" str(self.my_color[1]) + ":" str(self.my_color[2]) + ":x")
+                    self.queue_sender.append(str(self.my_color[0]) + ":" + str(self.my_color[1]) + ":" + str(self.my_color[2]) + ":x")
                     self.clicked = False
                     self.points = []
 

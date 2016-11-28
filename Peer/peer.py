@@ -1,8 +1,11 @@
+import os
 import socket
-from listener import Listener
-from listenerudp import Listener_UDP
+import locale
 from sender import Sender
+from dialog import Dialog
+from listener import Listener
 from whiteboard import Whiteboard
+from listenerudp import Listener_UDP
 
 class Peer:
 
@@ -28,8 +31,12 @@ class Peer:
 
         response, server = self.socket.recvfrom(65565)
         response = response.decode('utf-8')
-        if response.decode('utf-8') == "created":
+        if response == "created":
             self.current_board = board_name
+            self.ips.append(socket.gethostbyname(socket.gethostname()))
+            return True
+        else:
+            return False
 
     def disconnect(self):
         message = "disconnect " + self.current_board
@@ -37,25 +44,69 @@ class Peer:
 
     def connect(self, board_name):
         message = "connect " + board_name
+        self.current_board = board_name
         self.socket.sendto(message.encode('utf-8'), (self.host_ip, self.host_port))
 
         response, server = self.socket.recvfrom(65565)
         ips = response.decode('utf-8').split(":")
         for ip in ips:
             self.ips.append(ip)
-        return self.ips
+
+        last_ip = self.ips[len(self.ips) - 1]
+        self.socket.sendto("connect".encode('utf-8'), (last_ip, 5002))
 
 if __name__ == '__main__':
     print("Starting Peer...")
-
     peer = Peer()
+
+    locale.setlocale(locale.LC_ALL, '')
+    dialog = Dialog(dialog="dialog")
+    dialog.set_background_title("Snowboard")
+
+    code, tag = dialog.menu("You have two options:", choices=[("(1)", "Create a board"),("(2)", "Connect to board")])
+    if code == dialog.OK:
+        if tag == "(1)":
+            code, name = dialog.inputbox("""\Board name:""", width=0, height=0, title="Create a board", extra_label="Cool button")
+            name = name.replace(" ", "")
+            if name == "":
+                os.system('clear')
+                print("Please, enter a valid name")
+                exit()
+            else:
+                created = peer.create_board(name)
+                if created == False:
+                    os.system('clear')
+                    print("Board " + name + " already exists")
+                    exit()
+        else:
+            boards = peer.list_boards()
+            choices = []
+            for b in boards:
+                choices.append((b, ""))
+
+            code, board = dialog.menu("Choose a Board...", choices=choices)
+            if code == dialog.OK:
+                peer.connect(board)
+    else:
+        os.system('clear')
+        exit()
+
+    os.system('clear')
+    print("Connected to Board: " + peer.current_board)
+    print("List IP: ", end=" ")
+    print(peer.ips)
+
+    print("Starting Listener...")
     listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender)
     listener.start()
 
+    print("Starting Listener UDP...")
     listenerudp = Listener_UDP(peer.ips)
     listenerudp.start()
 
+    print("Starting Sender...")
     sender = Sender(peer.queue_sender, peer.ips)
     sender.start()
 
+    print("Starting Whiteboard...")
     w = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender)
