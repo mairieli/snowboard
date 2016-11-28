@@ -26,7 +26,7 @@ class Listener_UDP(Thread):
                 print(ip + " is the last Peer now")
                 self.ips.append(ip)
             elif msg.startswith("remove"):
-                if ip not in self.ips
+                if ip not in self.ips:
                     continue
                 ip = msg.split(" ")[1]
                 print(ip + " is no longer in network")
