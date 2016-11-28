@@ -17,11 +17,11 @@ class Listener(Thread):
         while True:
             print("Waiting for senders on " + socket.gethostbyname(socket.gethostname()) + ":" + str(self.port))
             connection, client = s.accept()
-            print("Receiving data from " + client[0] + ":" + client[1])
+            print("Receiving data from " + client[0] + ":" + str(lient[1]))
             while True:
                 data_raw = connection.recv(65565)
                 if not data:
-                    print(client[0] + ":" + client[1] + " Disconnected")
+                    print(client[0] + ":" + str(client[1]) + " Disconnected")
                     break
 
                 data = data_raw.decode('utf-8')
