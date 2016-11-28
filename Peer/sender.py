@@ -48,8 +48,12 @@ class Sender(Thread):
                         next_index = self.ips.index(self.my_ip) + 1
                         if connected_to_first and next_index < len(self.ips):
                             print("Stopping sending to the first, for send to the next")
+                            s.close()
+                            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                             break
 
                 except Exception as e:
                     print(e.args)
+                    s.close()
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     remove_ip = self.ips.pop()
