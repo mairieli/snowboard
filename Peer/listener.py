@@ -40,11 +40,11 @@ class Listener(Thread):
                             self.queue_receiver[color] = []
 
                         if data[index+3] == "x":
-                            self.queue_sender.append(":" +  ":")
-                            self.queue_receiver[color].append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":x")
+                            self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":x")
+                            self.queue_receiver[color].append("x")
                             index = index + 4
                         else:
+                            self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":" + data[index+3] + ":" + data[index+4])
                             point = (int(data[index+3]), int(data[index+4]))
-                            self.queue_receiver[color].append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":" + data[index+3] + ":" + data[index+4])
                             self.queue_receiver[color].append(point)
                             index = index + 5
