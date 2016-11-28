@@ -36,4 +36,4 @@ class Listener_UDP(Thread):
                 index = next_index
             else:
                 index = 0
-            s.socket.sendto(msg.encode('utf-8'), (self.ips[index], 5002))
+            s.sendto(msg.encode('utf-8'), (self.ips[index], 5002))
