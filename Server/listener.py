@@ -2,7 +2,7 @@ from threading import Thread
 from worker import Worker
 import socket
 
-class Listen(Thread):
+class Listener(Thread):
     def __init__ (self, host, port):
         Thread.__init__(self)
         self.host = host
