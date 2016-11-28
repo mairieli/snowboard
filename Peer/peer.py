@@ -17,7 +17,7 @@ class Peer:
         self.ips = []
         self.queue_receiver = {}
         self.queue_sender = []
-        self.my_color = (0, 0, 0)
+        self.my_color = (255, 0, 255)
 
     def list_boards(self):
         self.socket.sendto("list all".encode('utf-8'), (self.host_ip, self.host_port))
@@ -48,11 +48,10 @@ class Peer:
 
         response, server = self.socket.recvfrom(65565)
         ips = response.decode('utf-8').split(":")
+        my_ip = socket.gethostbyname(socket.gethostname())
         for ip in ips:
-            self.ips.append(ip)
-
-        last_ip = self.ips[len(self.ips) - 1]
-        self.socket.sendto("connect".encode('utf-8'), (last_ip, 5002))
+            if ip != my_ip:
+                self.ips.append(ip)
 
 if __name__ == '__main__':
     print("Starting Peer...")
@@ -96,8 +95,12 @@ if __name__ == '__main__':
     print(peer.ips)
 
     print("Starting Listener...")
-    listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender)
+    listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips)
     listener.start()
+
+    print("Starting Whiteboard...")
+    w = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender)
+    w.start()
 
     print("Starting Listener UDP...")
     listenerudp = Listener_UDP(peer.ips)
@@ -106,6 +109,3 @@ if __name__ == '__main__':
     print("Starting Sender...")
     sender = Sender(peer.queue_sender, peer.ips)
     sender.start()
-
-    print("Starting Whiteboard...")
-    w = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender)

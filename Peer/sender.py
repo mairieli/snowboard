@@ -42,11 +42,12 @@ class Sender(Thread):
 
                     while True:
                         if send_current < len(self.queue_sender):
-                            s.send(self.queue_sender[send_current])
+                            s.send(self.queue_sender[send_current].encode('utf-8'))
                             send_current = send_current + 1
                         if connected_to_first and self.ips[self.ips.index(my_ip) + 1]:
                             print("Stopping sending to the first, for send to the next")
                             break
 
-                except Exception:
+                except Exception as e:
+                    print(e.args)
                     remove_ip = self.ips.pop()

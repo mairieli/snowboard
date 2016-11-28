@@ -1,8 +1,10 @@
+from threading import Thread
 import pygame
 
-class Whiteboard:
+class Whiteboard(Thread):
 
     def __init__(self, my_color, queue_receiver, queue_sender):
+        Thread.__init__(self)
         self.screen = pygame.display.set_mode((640, 480))
         self.clicked = False;
         self.points = []
@@ -11,6 +13,7 @@ class Whiteboard:
         self.queue_sender = queue_sender
         self.my_color = my_color
 
+    def run(self):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -22,10 +25,10 @@ class Whiteboard:
                 if event.type == pygame.MOUSEMOTION and self.clicked:
                     point = event.__dict__['pos']
                     self.points.append(point)
-                    self.queue_sender.append(str(self.my_color[0]) + ":" + str(self.my_color[1]) + ":" + str(self.my_color[2]) + ":" + str(point[0]) + ":" + str(point[1]))
+                    self.queue_sender.append(":" + str(self.my_color[0]) + ":" + str(self.my_color[1]) + ":" + str(self.my_color[2]) + ":" + str(point[0]) + ":" + str(point[1]))
 
                 if event.type == pygame.MOUSEBUTTONUP:
-                    self.queue_sender.append(str(self.my_color[0]) + ":" + str(self.my_color[1]) + ":" + str(self.my_color[2]) + ":x")
+                    self.queue_sender.append(":" + str(self.my_color[0]) + ":" + str(self.my_color[1]) + ":" + str(self.my_color[2]) + ":x")
                     self.clicked = False
                     self.points = []
 
@@ -33,12 +36,13 @@ class Whiteboard:
                     pygame.draw.aalines(self.screen, self.my_color, False, [self.points[0], self.points[1]])
                     self.points.remove(self.points[0])
 
-                for color, color_points in self.queue_receiver.items():
-                    if len(color_points) >= 2:
-                        if color_points[1] == "x":
-                            self.points.remove(self.points[0])
-                        else:
-                            pygame.draw.aalines(self.screen, color, False, [color_points[0], color_points[1]])
-                            color_points.remove(color_points[0])
+            for color, color_points in self.queue_receiver.items():
+                if len(color_points) >= 2:
+                    if color_points[1] == "x":
+                        color_points.remove(color_points[0])
+                        color_points.remove(color_points[0])
+                    else:
+                        pygame.draw.aalines(self.screen, color, False, [color_points[0], color_points[1]])
+                        color_points.remove(color_points[0])
 
-                pygame.display.flip()
+            pygame.display.flip()
