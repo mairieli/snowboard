@@ -16,7 +16,7 @@ class Listener_UDP(Thread):
         while True:
             msg, client = s.recvfrom(65565)
             msg = msg.decode('utf-8')
-            print("Received '" + msg + "' from " + client[0] + ":" + client[1])
+            print("Received '" + msg + "' from " + client[0] + ":" + str(client[1]))
             if msg.startswith("connect"):
                 print(client[0] + " is the last Peer now")
                 self.ips.append(client[0])
