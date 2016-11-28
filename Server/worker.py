@@ -61,5 +61,8 @@ class Worker(Thread):
             print("Request to remove:" + ip_removed)
             if ip_removed in self.table[name_board]:
                 self.table[name_board].remove(ip_removed)
+                if len(self.table[name_board]) == 0:
+                    print("\tDeleted Board: " + name_board + ", because is empty")
+                    self.table.pop(name_board)
 
         print()
