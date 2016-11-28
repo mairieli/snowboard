@@ -47,4 +47,4 @@ class Listener(Thread):
                             self.queue_receiver[color].append(point)
                             index = index + 5
                     else:
-                        break
+                        index = len(data)
