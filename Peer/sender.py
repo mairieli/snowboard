@@ -44,7 +44,7 @@ class Sender(Thread):
                     while True:
                         if send_current < len(self.queue_sender):
                             s.send(self.queue_sender[send_current].encode('utf-8'))
-                            print("Send '" + self.queue_sender[send_current].encode('utf-8') + "'")
+                            print("Send '" + self.queue_sender[send_current] + "'")
                             send_current = send_current + 1
                         next_index = self.ips.index(self.my_ip) + 1
                         if connected_to_first and next_index < len(self.ips):
