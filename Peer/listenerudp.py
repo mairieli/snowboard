@@ -18,10 +18,18 @@ class Listener_UDP(Thread):
             msg, client = s.recvfrom(65565)
             msg = msg.decode('utf-8')
             print("Received '" + msg + "' from " + client[0] + ":" + str(client[1]))
+
+            ip = msg.split(" ")[1]
             if msg.startswith("connect"):
-                print(client[0] + " is the last Peer now")
-                self.ips.append(client[0])
+                print(ip + " is the last Peer now")
+                self.ips.append(ip)
             elif msg.startswith("remove"):
-                removed_ip = msg.split(" ")[1]
-                print(removed_ip + " is no longer in network")
-                self.ips.remove(removed_ip)
+                ip = msg.split(" ")[1]
+                print(ip + " is no longer in network")
+                self.ips.remove(ip)
+            next_index = self.ips.index(self.my_ip) + 1
+            if next_index < len(self.ips):
+                index = next_index
+            else:
+                index = 0
+            s.socket.sendto(msg.encode('utf-8'), (self.ips[index], 5002))
