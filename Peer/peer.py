@@ -103,7 +103,7 @@ if __name__ == '__main__':
     listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips)
     listener.start()
 
-    if !created:
+    if not created:
         last_ip = peer.ips[len(peer.ips) - 1]
         peer.sendto("connect".encode('utf-8'), (last_ip, 5002))
 
