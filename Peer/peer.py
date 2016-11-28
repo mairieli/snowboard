@@ -62,6 +62,8 @@ if __name__ == '__main__':
     dialog = Dialog(dialog="dialog")
     dialog.set_background_title("Snowboard")
 
+    created = False
+
     code, tag = dialog.menu("You have two options:", choices=[("(1)", "Create a board"),("(2)", "Connect to board")])
     if code == dialog.OK:
         if tag == "(1)":
@@ -77,6 +79,8 @@ if __name__ == '__main__':
                     os.system('clear')
                     print("Board " + name + " already exists")
                     exit()
+                else:
+                    created = True
         else:
             boards = peer.list_boards()
             choices = []
@@ -98,6 +102,10 @@ if __name__ == '__main__':
     print("Starting Listener...")
     listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips)
     listener.start()
+
+    if !created:
+        last_ip = peer.ips[len(peer.ips) - 1]
+        peer.sendto("connect".encode('utf-8'), (last_ip, 5002))
 
     print("Starting Whiteboard...")
     w = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender)

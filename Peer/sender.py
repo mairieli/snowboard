@@ -22,7 +22,6 @@ class Sender(Thread):
                 try:
                     my_ip = socket.gethostbyname(socket.gethostname())
                     next_index = self.ips.index(my_ip) + 1
-                    print("lala")
                     if next_index < len(self.ips):
                         print("Connecting to the next on the network")
                         index = self.ips.index(my_ip) + 1

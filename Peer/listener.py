@@ -16,10 +16,6 @@ class Listener(Thread):
         s.bind((self.host, self.port))
         s.listen(10)
 
-        last_ip = self.ips[len(self.ips) - 1]
-        s_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s_udp.sendto("connect".encode('utf-8'), (last_ip, 5002))
-
         while True:
             print("Waiting for senders on " + socket.gethostbyname(socket.gethostname()) + ":" + str(self.port))
             connection, client = s.accept()
