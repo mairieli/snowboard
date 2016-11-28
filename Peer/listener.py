@@ -29,7 +29,7 @@ class Listener(Thread):
 
                 data = data_raw.decode('utf-8')
                 data = data.split(":")
-                print("Received '" + data_raw.decode('utf-8') + "'")
+
                 index = 1
                 while index < len(data):
                     color = (int(data[index]), int(data[index+1]), int(data[index+2]))
