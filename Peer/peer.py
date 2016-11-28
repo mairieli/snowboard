@@ -19,6 +19,10 @@ class Peer:
         self.queue_sender = []
         self.my_color = (255, 0, 255)
 
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 53))
+        self.my_ip = s.getsockname()[0]
+
     def list_boards(self):
         self.socket.sendto("list all".encode('utf-8'), (self.host_ip, self.host_port))
         msg, server = self.socket.recvfrom(65565)
@@ -32,7 +36,7 @@ class Peer:
         response = response.decode('utf-8')
         if response == "created":
             self.current_board = board_name
-            self.ips.append(socket.gethostbyname(socket.gethostname()))
+            self.ips.append(self.my_ip)
             return True
         else:
             return False
@@ -48,11 +52,10 @@ class Peer:
 
         response, server = self.socket.recvfrom(65565)
         ips = response.decode('utf-8').split(":")
-        my_ip = socket.gethostbyname(socket.gethostname())
         for ip in ips:
-            if ip != my_ip:
+            if ip != self.my_ip:
                 self.ips.append(ip)
-        self.ips.append(my_ip)
+        self.ips.append(self.my_ip)
 
 if __name__ == '__main__':
     print("Starting Peer...")
@@ -100,21 +103,22 @@ if __name__ == '__main__':
     print(peer.ips)
 
     print("Starting Listener...")
-    listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips)
+    listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips, peer.my_ip)
     listener.start()
 
     if not created:
-        last_ip = peer.ips[len(peer.ips) - 1]
+        last_ip = peer.ips[len(peer.ips) - 2]
         peer.socket.sendto("connect".encode('utf-8'), (last_ip, 5002))
+        print("Sending connect to " + last_ip + ":5002")
 
     print("Starting Whiteboard...")
     w = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender)
     w.start()
 
     print("Starting Listener UDP...")
-    listenerudp = Listener_UDP(peer.ips)
+    listenerudp = Listener_UDP(peer.ips, peer.my_ip)
     listenerudp.start()
 
     print("Starting Sender...")
-    sender = Sender(peer.queue_sender, peer.ips)
+    sender = Sender(peer.queue_sender, peer.ips, peer.my_ip)
     sender.start()

@@ -2,7 +2,7 @@ from threading import Thread
 import socket
 
 class Listener(Thread):
-    def __init__ (self, my_color, queue_receiver, queue_sender, ips):
+    def __init__ (self, my_color, queue_receiver, queue_sender, ips, my_ip):
         Thread.__init__(self)
         self.host = ''
         self.port =  5001
@@ -10,6 +10,7 @@ class Listener(Thread):
         self.queue_sender = queue_sender
         self.my_color = my_color
         self.ips = ips
+        self.my_ip = my_ip
 
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -17,7 +18,7 @@ class Listener(Thread):
         s.listen(10)
 
         while True:
-            print("Waiting for senders on " + socket.gethostbyname(socket.gethostname()) + ":" + str(self.port))
+            print("Waiting for senders on " + self.my_ip + ":" + str(self.port))
             connection, client = s.accept()
             print("Receiving data from " + client[0] + ":" + str(client[1]))
             while True:
@@ -27,7 +28,7 @@ class Listener(Thread):
                     break
 
                 data = data_raw.decode('utf-8')
-                print("Received '" + data + "'")
+                #print("Received '" + data + "'")
                 data = data.split(":")
 
                 index = 1
