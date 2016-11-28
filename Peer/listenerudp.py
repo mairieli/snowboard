@@ -2,12 +2,14 @@ from threading import Thread
 import socket
 
 class Listener_UDP(Thread):
-    def __init__ (self, ips, my_ip):
+    def __init__ (self, ips, my_ip, my_board, host_ip):
         Thread.__init__(self)
         self.host = ''
         self.port =  5002
         self.ips = ips
         self.my_ip = my_ip
+        self.my_board = my_board
+        self.host_ip = host_ip
 
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -30,6 +32,8 @@ class Listener_UDP(Thread):
                     continue
                 ip = msg.split(" ")[1]
                 print(ip + " is no longer in network")
+                msg_server = "remove " + ip + " " + self.my_board
+                s.sendto(msg_server.encode('utf-8'), (self.host_ip, 6000))
                 self.ips.remove(ip)
             next_index = self.ips.index(self.my_ip) + 1
             if next_index < len(self.ips):

@@ -55,4 +55,11 @@ class Worker(Thread):
                 print("\tDeleted Board: " + name_board + ", because is empty")
                 self.table.pop(name_board)
 
+        elif self.msg.startswith("remove"):
+            ip_removed = self.msg.split(" ")[1]
+            name_board = self.msg.split(" ")[2]
+            print("Request to remove:" + ip_removed)
+            if ip_removed in self.table[name_board]:
+                self.table[name_board].remove(ip_removed)
+
         print()
