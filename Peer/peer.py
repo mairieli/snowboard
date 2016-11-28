@@ -12,7 +12,7 @@ class Peer:
 
     def __init__ (self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.host_ip = "192.168.1.109"
+        self.host_ip = ""
         self.host_port = 6000
         self.current_board = ""
         self.ips = []
@@ -68,32 +68,41 @@ if __name__ == '__main__':
 
     created = False
 
-    code, tag = dialog.menu("You have two options:", choices=[("(1)", "Create a board"),("(2)", "Connect to board")])
+    code, ip_host = dialog.inputbox("Server IP:", width=0, height=0, title="Create a board", extra_label="Cool button")
     if code == dialog.OK:
-        if tag == "(1)":
-            code, name = dialog.inputbox("Board name:", width=0, height=0, title="Create a board", extra_label="Cool button")
-            name = name.replace(" ", "")
-            if name == "":
-                os.system('clear')
-                print("Please, enter a valid name")
-                exit()
-            else:
-                created = peer.create_board(name)
-                if created == False:
+        peer.host_ip = ip_host
+        code, tag = dialog.menu("You have two options:", choices=[("(1)", "Create a board"),("(2)", "Connect to board")])
+        if code == dialog.OK:
+            if tag == "(1)":
+                code, name = dialog.inputbox("Board name:", width=0, height=0, title="Create a board", extra_label="Cool button")
+                name = name.replace(" ", "")
+                if name == "":
                     os.system('clear')
-                    print("Board " + name + " already exists")
+                    print("Please, enter a valid name")
                     exit()
                 else:
-                    created = True
-        else:
-            boards = peer.list_boards()
-            choices = []
-            for b in boards:
-                choices.append((b, ""))
+                    created = peer.create_board(name)
+                    if created == False:
+                        os.system('clear')
+                        print("Board " + name + " already exists")
+                        exit()
+                    else:
+                        created = True
+            else:
+                boards = peer.list_boards()
+                choices = []
+                for b in boards:
+                    choices.append((b, ""))
 
-            code, board = dialog.menu("Choose a Board...", choices=choices)
-            if code == dialog.OK:
-                peer.connect(board)
+                code, board = dialog.menu("Choose a Board...", choices=choices)
+                if code == dialog.OK:
+                    peer.connect(board)
+                else:
+                    os.system('clear')
+                    exit()
+        else:
+            os.system('clear')
+            exit()
     else:
         os.system('clear')
         exit()
