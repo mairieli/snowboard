@@ -11,9 +11,8 @@ class Peer:
 
     def __init__ (self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind(('', 5000))
         self.host_ip = "192.168.1.109"
-        self.host_port = 5000
+        self.host_port = 6000
         self.current_board = ""
         self.ips = []
         self.queue_receiver = {}
