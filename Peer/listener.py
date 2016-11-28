@@ -28,13 +28,11 @@ class Listener(Thread):
                     break
 
                 data = data_raw.decode('utf-8')
-                #print("Received '" + data + "'")
                 data = data.split(":")
-
+                print("Received '" + data_raw.decode('utf-8') + "'")
                 index = 1
                 while index < len(data):
                     color = (int(data[index]), int(data[index+1]), int(data[index+2]))
-
                     if color != self.my_color:
                         if color not in self.queue_receiver:
                             self.queue_receiver[color] = []
