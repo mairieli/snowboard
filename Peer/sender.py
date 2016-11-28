@@ -56,4 +56,5 @@ class Sender(Thread):
                     print(e.args)
                     s.close()
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    remove_ip = self.ips.pop()
+                    remove_ip = self.ips[index]
+                    self.ips.remove(self.ips[index])
