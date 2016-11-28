@@ -3,6 +3,7 @@ import socket
 import locale
 from sender import Sender
 from dialog import Dialog
+from random import randint
 from listener import Listener
 from whiteboard import Whiteboard
 from listenerudp import Listener_UDP
@@ -17,7 +18,7 @@ class Peer:
         self.ips = []
         self.queue_receiver = {}
         self.queue_sender = []
-        self.my_color = (255, 0, 255)
+        self.my_color = (randint(0,254), randint(0,254), randint(0,254))
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('8.8.8.8', 53))
