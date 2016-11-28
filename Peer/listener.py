@@ -35,18 +35,18 @@ class Listener(Thread):
                 data = data.split(":")
 
                 index = 1
-                while 1 < len(data)
-                color = (int(data[index]), int(data[index+1]), int(data[index+2]))
+                while 1 < len(data):
+                    color = (int(data[index]), int(data[index+1]), int(data[index+2]))
 
-                if color != self.my_color:
-                    if color not in self.queue_receiver:
-                        self.queue_receiver[color] = []
+                    if color != self.my_color:
+                        if color not in self.queue_receiver:
+                            self.queue_receiver[color] = []
 
-                    self.queue_sender.append(data_raw)
-                    if data[index+3] == "x":
-                        self.queue_receiver[color].append("x")
-                        index = index + 4
-                    else:
-                        point = (int(data[index+3]), int(data[index+4]))
-                        self.queue_receiver[color].append(point)
-                        index = index + 5
+                        self.queue_sender.append(data_raw)
+                        if data[index+3] == "x":
+                            self.queue_receiver[color].append("x")
+                            index = index + 4
+                        else:
+                            point = (int(data[index+3]), int(data[index+4]))
+                            self.queue_receiver[color].append(point)
+                            index = index + 5
