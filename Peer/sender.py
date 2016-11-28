@@ -30,7 +30,7 @@ class Sender(Thread):
                         index = 0
                         connected_to_first = True
 
-                    print("Trying to connect to " + self.ips[index] + ":" + str(self.port))
+                    print("Trying to connect to " + self.ips[index] + ":" + str(self.port) + "...")
                     s.connect((self.ips[index], self.port))
                     print("Sending data to " + self.ips[index] + ":" + str(self.port))
 

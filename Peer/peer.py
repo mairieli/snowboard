@@ -70,7 +70,7 @@ if __name__ == '__main__':
     code, tag = dialog.menu("You have two options:", choices=[("(1)", "Create a board"),("(2)", "Connect to board")])
     if code == dialog.OK:
         if tag == "(1)":
-            code, name = dialog.inputbox("""\Board name:""", width=0, height=0, title="Create a board", extra_label="Cool button")
+            code, name = dialog.inputbox("Board name:", width=0, height=0, title="Create a board", extra_label="Cool button")
             name = name.replace(" ", "")
             if name == "":
                 os.system('clear')
@@ -99,8 +99,6 @@ if __name__ == '__main__':
 
     os.system('clear')
     print("Connected to Board: " + peer.current_board)
-    print("List IP: ", end=" ")
-    print(peer.ips)
 
     print("Starting Listener...")
     listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips, peer.my_ip)
