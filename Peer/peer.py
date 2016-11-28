@@ -106,9 +106,12 @@ if __name__ == '__main__':
 
     if not created:
         last_ip = peer.ips[len(peer.ips) - 2]
+        first_ip = peer.ips[0]
         msg = "connect " + peer.my_ip
         peer.socket.sendto(msg.encode('utf-8'), (last_ip, 5002))
+        peer.socket.sendto(msg.encode('utf-8'), (first_ip, 5002))
         print("Sending connect to " + last_ip + ":5002")
+        print("Sending connect to " + first_ip + ":5002")
 
     print("Starting Whiteboard...")
     w = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender)
