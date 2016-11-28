@@ -38,7 +38,9 @@ class Whiteboard(Thread):
 
             for color, color_points in self.queue_receiver.items():
                 if len(color_points) >= 2:
-                    if color_points[1] == "x":
+                    if color_points[0] == "x":
+                        color_points.remove(color_points[0])
+                    elif color_points[1] == "x":
                         color_points.remove(color_points[0])
                         color_points.remove(color_points[0])
                     else:
