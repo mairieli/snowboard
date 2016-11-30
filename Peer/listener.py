@@ -36,7 +36,7 @@ class Listener(Thread):
 
                 index = 1
                 while index < len(data):
-                    if data[index] == ":y":
+                    if data[index] == "y":
                         propagate = True
                         index = index + 1
                         continue
