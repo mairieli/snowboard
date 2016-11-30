@@ -30,8 +30,8 @@ class Listener(Thread):
                     break
 
                 data = data_raw.decode('utf-8')
-                print("\t\t'" + data +"'")
-                
+                print("\t\t=>'" + data +"'")
+
                 if data == "y":
                     propagate = True
                     continue
