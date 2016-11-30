@@ -30,16 +30,17 @@ class Listener(Thread):
                     break
 
                 data = data_raw.decode('utf-8')
-                print("\t\t=>'" + data +"'")
-
-                if data == "y":
-                    propagate = True
-                    continue
+                print("\t\t=<'" + data +"'")
 
                 data = data.split(":")
 
                 index = 1
                 while index < len(data):
+                    if data[index] == "y":
+                        propagate = True
+                        index = index + 1
+                        continue
+
                     color = (int(data[index]), int(data[index+1]), int(data[index+2]))
                     if color != self.my_color:
                         if color not in self.queue_receiver:
