@@ -21,6 +21,8 @@ class Listener(Thread):
             print("Waiting for senders on " + self.my_ip + ":" + str(self.port))
             connection, client = s.accept()
             print("Receiving data from " + client[0] + ":" + str(client[1]))
+
+            propagate = False
             while True:
                 data_raw = connection.recv(65565)
                 if not data_raw:
@@ -28,6 +30,12 @@ class Listener(Thread):
                     break
 
                 data = data_raw.decode('utf-8')
+                print("\t\t'" + data +"'")
+                
+                if data == "y":
+                    propagate = True
+                    continue
+
                 data = data.split(":")
 
                 index = 1
@@ -38,11 +46,13 @@ class Listener(Thread):
                             self.queue_receiver[color] = []
 
                         if data[index+3] == "x":
-                            self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":x")
+                            if propagate:
+                                self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":x")
                             self.queue_receiver[color].append("x")
                             index = index + 4
                         else:
-                            self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":" + data[index+3] + ":" + data[index+4])
+                            if propagate:
+                                self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":" + data[index+3] + ":" + data[index+4])
                             point = (int(data[index+3]), int(data[index+4]))
                             self.queue_receiver[color].append(point)
                             index = index + 5

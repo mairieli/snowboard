@@ -1,3 +1,4 @@
+import socket
 from listener import Listener
 
 if __name__ == '__main__':
@@ -6,6 +7,6 @@ if __name__ == '__main__':
 	my_ip = s.getsockname()[0]
 	my_port = 6000
 
-	print("Starting Server " + my_ip + ":" + my_port)
+	print("Starting Server " + my_ip + ":" + str(my_port))
 	listener = Listener(my_ip, my_port)
 	listener.start()

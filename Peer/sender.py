@@ -35,6 +35,7 @@ class Sender(Thread):
                     print("Trying to connect to " + self.ips[index] + ":" + str(self.port) + "...")
                     s.connect((self.ips[index], self.port))
                     print("Sending data to " + self.ips[index] + ":" + str(self.port))
+                    self.queue_sender.append("y")
 
                     if remove_ip != "":
                         s_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
