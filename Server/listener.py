@@ -7,7 +7,7 @@ class Listener(Thread):
         Thread.__init__(self)
         self.host = host
         self.port =  port
-        self.table = {}
+        self.boards = {}
 
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -15,5 +15,5 @@ class Listener(Thread):
 
         while True:
             msg, client = s.recvfrom(65565)
-            w = Worker(msg, client, self.table)
+            w = Worker(msg, client, self.boards)
             w.start()

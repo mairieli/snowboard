@@ -17,21 +17,21 @@ class Listener_UDP(Thread):
         while True:
             msg, client = s.recvfrom(65565)
             msg = msg.decode('utf-8')
-            print("Received '" + msg + "' from " + client[0] + ":" + str(client[1]))
+            print("\tReceived '" + msg + "' from " + client[0] + ":" + str(client[1]))
 
             ip = msg.split(" ")[1]
             if msg.startswith("connect"):
                 if ip in self.ips:
                     continue
-                print(ip + " is the last Peer now")
+                print("\t" + ip + " is the last Peer now")
                 self.ips.append(ip)
             elif msg.startswith("remove"):
                 if ip not in self.ips:
                     continue
                 ip = msg.split(" ")[1]
-                print(ip + " is no longer in network")             
+                print("\t" + ip + " is no longer in network")             
                 self.ips.remove(ip)
-            print("Updated IPs", end=" ")
+            print("[UPDATED IPs]", end="")
             print(self.ips)
             next_index = self.ips.index(self.my_ip) + 1
             if next_index < len(self.ips):

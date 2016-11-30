@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
     created = False
 
-    code, ip_host = dialog.inputbox("Server IP:", width=0, height=0, title="Create a board", extra_label="Cool button")
+    code, ip_host = dialog.inputbox("Server IP:", width=0, height=0, title="Connect to Server", extra_label="Cool button")
     if code == dialog.OK:
         peer.host_ip = ip_host
         code, tag = dialog.menu("You have two options:", choices=[("(1)", "Create a board"),("(2)", "Connect to board")])
@@ -90,7 +90,7 @@ if __name__ == '__main__':
                         created = True
             else:
                 boards = peer.list_boards()
-                if boards == "":
+                if boards[0] == "":
                     os.system('clear')
                     print("No boards on Server")
                     exit()
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         exit()
 
     os.system('clear')
-    print("Connected to Board: " + peer.current_board)
+    print("\tConnected to Board: " + peer.current_board)
 
     print("Starting Listener...")
     listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips, peer.my_ip)
@@ -124,8 +124,8 @@ if __name__ == '__main__':
         msg = "connect " + peer.my_ip
         peer.socket.sendto(msg.encode('utf-8'), (last_ip, 5002))
         peer.socket.sendto(msg.encode('utf-8'), (first_ip, 5002))
-        print("Sending connect to " + last_ip + ":5002")
-        print("Sending connect to " + first_ip + ":5002")
+        print("\tSending connect to " + last_ip + ":5002")
+        print("\tSending connect to " + first_ip + ":5002")
 
     print("Starting Whiteboard...")
     w = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender)
