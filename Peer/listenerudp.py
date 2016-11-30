@@ -35,6 +35,8 @@ class Listener_UDP(Thread):
                 msg_server = "remove " + ip + " " + self.my_board
                 s.sendto(msg_server.encode('utf-8'), (self.host_ip, 6000))
                 self.ips.remove(ip)
+            print("Updated IPs", end=" ")
+            print(self.ips)
             next_index = self.ips.index(self.my_ip) + 1
             if next_index < len(self.ips):
                 index = next_index
