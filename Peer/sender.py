@@ -2,12 +2,14 @@ from threading import Thread
 import socket
 
 class Sender(Thread):
-    def __init__ (self, queue_sender, ips, my_ip):
+    def __init__ (self, queue_sender, ips, my_ip, current_board, host_ip):
         Thread.__init__(self)
         self.port =  5001
         self.queue_sender = queue_sender
         self.ips = ips
         self.my_ip = my_ip
+        self.current_board = current_board
+        self.host_ip = host_ip
 
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -49,12 +51,19 @@ class Sender(Thread):
                         if connected_to_first and next_index < len(self.ips):
                             print("Stopping sending to the first, for send to the next")
                             s.close()
+                            send_current = 0
                             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                             break
 
                 except Exception as e:
                     print(e.args)
                     s.close()
-                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    
                     remove_ip = self.ips[index]
+
+                    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    msg_server = "remove " + remove_ip + " " + self.current_board
+                    s.sendto(msg_server.encode('utf-8'), (self.host_ip, 6000))
+                    
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     self.ips.remove(self.ips[index])

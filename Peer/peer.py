@@ -132,9 +132,9 @@ if __name__ == '__main__':
     w.start()
 
     print("Starting Listener UDP...")
-    listenerudp = Listener_UDP(peer.ips, peer.my_ip, peer.current_board, peer.host_ip)
+    listenerudp = Listener_UDP(peer.ips, peer.my_ip)
     listenerudp.start()
 
     print("Starting Sender...")
-    sender = Sender(peer.queue_sender, peer.ips, peer.my_ip)
+    sender = Sender(peer.queue_sender, peer.ips, peer.my_ip, peer.current_board, peer.host_ip)
     sender.start()
