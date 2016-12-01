@@ -4,17 +4,16 @@ import socket
 class Listener(Thread):
     def __init__ (self, my_color, queue_receiver, queue_sender, ips, my_ip):
         Thread.__init__(self)
-        self.host = ''
+        self.my_ip = my_ip
         self.port =  5001
         self.queue_receiver = queue_receiver
         self.queue_sender = queue_sender
         self.my_color = my_color
         self.ips = ips
-        self.my_ip = my_ip
 
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((self.host, self.port))
+        s.bind((self.my_ip, self.port))
         s.listen(10)
 
         while True:
@@ -22,7 +21,6 @@ class Listener(Thread):
             connection, client = s.accept()
             print("Receiving data from " + client[0] + ":" + str(client[1]))
 
-            propagate = False
             while True:
                 data_raw = connection.recv(65565)
                 if not data_raw:
@@ -30,16 +28,10 @@ class Listener(Thread):
                     break
 
                 data = data_raw.decode('utf-8')
-                print("\t\t=<'" + data +"'")
-
                 data = data.split(":")
 
                 index = 1
                 while index < len(data):
-                    if data[index] == "y":
-                        propagate = True
-                        index = index + 1
-                        continue
 
                     color = (int(data[index]), int(data[index+1]), int(data[index+2]))
                     if color != self.my_color:
@@ -47,15 +39,13 @@ class Listener(Thread):
                             self.queue_receiver[color] = []
 
                         if data[index+3] == "x":
-                            if propagate:
-                                self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":x")
                             self.queue_receiver[color].append("x")
+                            self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":x")
                             index = index + 4
                         else:
-                            if propagate:
-                                self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":" + data[index+3] + ":" + data[index+4])
                             point = (int(data[index+3]), int(data[index+4]))
                             self.queue_receiver[color].append(point)
+                            self.queue_sender.append(":" + data[index] + ":" + data[index+1] + ":" + data[index+2] + ":" + data[index+3] + ":" + data[index+4])
                             index = index + 5
                     else:
                         index = len(data)

@@ -2,14 +2,14 @@ from threading import Thread
 import socket
 
 class Sender(Thread):
-    def __init__ (self, queue_sender, ips, my_ip, current_board, host_ip):
+    def __init__ (self, queue_sender, ips, my_ip, current_board, server_ip):
         Thread.__init__(self)
+        self.my_ip = my_ip
         self.port =  5001
         self.queue_sender = queue_sender
         self.ips = ips
-        self.my_ip = my_ip
         self.current_board = current_board
-        self.host_ip = host_ip
+        self.server_ip = server_ip
 
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -17,7 +17,7 @@ class Sender(Thread):
         remove_ip = ""
 
         while True:
-            connected_to_first = False
+            connected_to_first = True
 
             if len(self.ips) > 1:
                 print("Sending data...")
@@ -25,47 +25,44 @@ class Sender(Thread):
                 try:
                     next_index = self.ips.index(self.my_ip) + 1
                     if next_index < len(self.ips):
-                        print("Connecting to the next on the network")
+                        print("\tConnecting to the next on the network ring")
                         index = self.ips.index(self.my_ip) + 1
+                        connected_to_first = False
                     else:
-                        print("Connecting to the first IP of the network")
+                        print("\tConnecting to the first IP of the network")
                         index = 0
-                        connected_to_first = True
 
-                    print("Trying to connect to " + self.ips[index] + ":" + str(self.port) + "...")
+                    print("\tTrying to connect to " + self.ips[index] + ":" + str(self.port) + "...")
                     s.connect((self.ips[index], self.port))
-                    print("Sending data to " + self.ips[index] + ":" + str(self.port))
-                    self.queue_sender.append(":y")
+                    print("\tSENDING DATA TO " + self.ips[index] + ":" + str(self.port))
 
                     if remove_ip != "":
                         s_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                         msg = "remove " + remove_ip
-                        print("Sending UDP '" + msg + "' to " + self.ips[index] + ":5002")
+                        print("\tUpdating '" + self.ips[index] + " with '" + msg + "'")
                         s_udp.sendto(msg.encode('utf-8'), (self.ips[index], 5002))
                         remove_ip = ""
 
                     while True:
                         if send_current < len(self.queue_sender):
                             s.send(self.queue_sender[send_current].encode('utf-8'))
-                            print("\t\t=>'" + self.queue_sender[send_current] +"'")
                             send_current = send_current + 1
+
                         next_index = self.ips.index(self.my_ip) + 1
                         if connected_to_first and next_index < len(self.ips):
-                            print("Stopping sending to the first, for send to the next")
+                            print("\tStopping sending to the first, for send to the next in network")
                             s.close()
-                            send_current = 0
                             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                             break
 
                 except Exception as e:
-                    print(e.args)
-                    s.close()
-                    
+                    s.close()                 
                     remove_ip = self.ips[index]
 
                     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                     msg_server = "remove " + remove_ip + " " + self.current_board
-                    s.sendto(msg_server.encode('utf-8'), (self.host_ip, 6000))
+                    print("\tUpdating Server with '" + msg_server + "'")
+                    s.sendto(msg_server.encode('utf-8'), (self.server_ip, 6000))
                     
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     self.ips.remove(self.ips[index])

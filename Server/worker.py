@@ -51,6 +51,7 @@ class Worker(Thread):
             self.s.sendto(response.encode('utf-8'), (self.client_ip, self.client_port))
 
             print("\tAdded " + self.client_ip + " to " + name_board)
+            list(filter((self.client_ip).__ne__, self.boards[name_board]))
             self.boards[name_board].append(self.client_ip)
 
         elif self.msg.startswith("disconnect"):
