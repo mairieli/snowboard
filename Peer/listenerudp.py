@@ -2,19 +2,21 @@ from threading import Thread
 import socket
 
 class Listener_UDP(Thread):
-    def __init__ (self, ips, my_ip):
+    def __init__ (self, ips, my_ip, socket):
         Thread.__init__(self)
         self.my_ip = my_ip
         self.port = 5002
         self.ips = ips
+        self.socket = socket
         
     def run(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.bind((self.my_ip, self.port))
+        self.socket.pop()
+        self.socket.append(socket.socket(socket.AF_INET, socket.SOCK_DGRAM))
+        self.socket[0].bind((self.my_ip, self.port))
         print("Waiting for UDP on " + self.my_ip + ":" + str(self.port))
 
         while True:
-            msg, client = s.recvfrom(65565)
+            msg, client = self.socket[0].recvfrom(65565)
             msg = msg.decode('utf-8')
             print("\tReceived '" + msg + "' from " + client[0] + ":" + str(client[1]))
 
@@ -39,4 +41,4 @@ class Listener_UDP(Thread):
             if next_index >= len(self.ips):
                 next_index = 0
                 
-            s.sendto(msg.encode('utf-8'), (self.ips[next_index], 5002))
+            self.socket[0].sendto(msg.encode('utf-8'), (self.ips[next_index], 5002))

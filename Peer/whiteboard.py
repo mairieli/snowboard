@@ -3,7 +3,7 @@ import pygame
 
 class Whiteboard(Thread):
 
-    def __init__(self, my_color, queue_receiver, queue_sender):
+    def __init__(self, my_color, queue_receiver, queue_sender, close):
         Thread.__init__(self)
         self.screen = pygame.display.set_mode((640, 480))
         self.clicked = False;
@@ -12,11 +12,14 @@ class Whiteboard(Thread):
         self.queue_receiver = queue_receiver
         self.queue_sender = queue_sender
         self.my_color = my_color
+        self.close = close
 
     def run(self):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.close.pop()
+                    self.close.append(True)
                     exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:

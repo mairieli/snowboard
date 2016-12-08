@@ -1,3 +1,4 @@
+import sys
 import time
 import socket
 from sender import Sender
@@ -26,6 +27,7 @@ class Peer:
         except Exception as e:
             print("MY IP: ", end="")
             self.my_ip = input()
+        s.close()
 
     def list_boards(self):
         self.socket.sendto("list all".encode('utf-8'), (self.server_ip, self.host_port))
@@ -68,7 +70,8 @@ if __name__ == '__main__':
     Dialog_Connect(peer, created_board).start()
     print("CONNECTED TO BOARD: " + peer.current_board)
 
-    listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips, peer.my_ip)
+    socket_listener = [True]
+    listener = Listener(peer.my_color, peer.queue_receiver, peer.queue_sender, peer.ips, peer.my_ip, socket_listener)
     listener.start()
 
     time.sleep(1)
@@ -82,12 +85,32 @@ if __name__ == '__main__':
         print("\tSending connect to " + last_ip + ":5002")
         print("\tSending connect to " + first_ip + ":5002")
 
-
-    whiteboard = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender)
+    close = []
+    close.append(False)
+    whiteboard = Whiteboard(peer.my_color, peer.queue_receiver, peer.queue_sender, close)
     whiteboard.start()
 
-    listenerudp = Listener_UDP(peer.ips, peer.my_ip)
+    socket_listenerudp = [True]
+    listenerudp = Listener_UDP(peer.ips, peer.my_ip, socket_listenerudp)
     listenerudp.start()
 
-    sender = Sender(peer.queue_sender, peer.ips, peer.my_ip, peer.current_board, peer.server_ip)
+    socket_sender = [True]
+    sender = Sender(peer.queue_sender, peer.ips, peer.my_ip, peer.current_board, peer.server_ip, socket_sender)
     sender.start()
+
+    while True:
+        if close[0] == True:
+            peer.disconnect()
+            print("---Disconnect to Server")
+            if peer.socket != None:
+                peer.socket.close()
+            if socket_sender[0] != True:
+                socket_sender[0].close()
+                print("---Stop send")
+            if socket_listener[0] != True:
+                socket_listener[0].close()
+                print("---Stop Listener")
+            if socket_listenerudp[0] != True:
+                socket_listenerudp[0].close()
+                print("---Stop Listener UDP")
+            sys.exit()
